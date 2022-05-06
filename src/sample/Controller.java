@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -19,9 +20,9 @@ public class Controller {
     @FXML
     public VBox vbox;
     @FXML
-    public TextField deleteTextField;
-    @FXML
     public Button btnSave;
+    @FXML
+    public ListView<String> lv;
 
     private String currentTopic;
     public List<String> topic1Tasks;
@@ -35,8 +36,6 @@ public class Controller {
     public Button btnTopic1;
     @FXML
     public Button btnTopic2;
-    @FXML
-    public TextArea textArea;
     @FXML
     public TextField textField1;
 
@@ -70,27 +69,29 @@ public class Controller {
 
     @FXML
     public void clickBtnDel(ActionEvent actionEvent) {  //обработка нажатия кнопки "Удалить"
-        deleteTextField.setVisible(true);
-        deleteTextField.requestFocus();
+        String taskToDelete = lv.getSelectionModel().getSelectedItem();
+        lv.getItems().remove(taskToDelete);
+        if (currentTopic.equals("Learn")){
+            topic1Tasks.remove(taskToDelete);
+        }else topic2Tasks.remove(taskToDelete);
+        btnSave.setStyle("-fx-background-color: #FA8072");
     }
 
     @FXML
     public void clickBtnTopic1(ActionEvent actionEvent) { //обработка нажатия кнопки "Учеба"
         currentTopic = "Learn";
-        textArea.clear();
+        lv.getItems().clear();
         for (String task:topic1Tasks) {
-            textArea.appendText(task);
-            textArea.appendText("\n\n");
+            lv.getItems().add(task);
         }
     }
 
     @FXML
     public void clickBtnTopic2(ActionEvent actionEvent) {  //обработка нажатия кнопки "Работа"
         currentTopic = "Work";
-        textArea.clear();
+        lv.getItems().clear();
         for (String task:topic2Tasks) {
-            textArea.appendText(task);
-            textArea.appendText("\n\n");
+            lv.getItems().add(task);
         }
     }
 
@@ -102,40 +103,16 @@ public class Controller {
             index = Integer.parseInt(topic1Tasks.get(topic1Tasks.size() - 1).substring(0,1));
             System.out.println(index);
             topic1Tasks.add((index + 1) + ". " + textField1.getText());
-            textArea.appendText((index + 1) + ". " + textField1.getText()+"\n\n");
+            lv.getItems().add((index + 1) + ". " + textField1.getText());
         }else if(currentTopic.equals("Work")){
             index = Integer.parseInt(topic2Tasks.get(topic2Tasks.size() - 1).substring(0,1));
             System.out.println(index);
             topic2Tasks.add((index + 1) + ". " + textField1.getText());
-            textArea.appendText((index + 1) + ". " + textField1.getText()+"\n\n");
+            lv.getItems().add((index + 1) + ". " + textField1.getText());
         }
 
         textField1.clear();
         textField1.setVisible(false);
-        btnSave.setStyle("-fx-background-color: #FA8072");  //изменение стиля компонента из кода, а не через файл .css
-    }
-
-    @FXML
-    public void deleteTask(ActionEvent actionEvent) {       //обработка нажатия Enter на textField (id "deleteTextField") при удалении задачи из списка
-        String number = deleteTextField.getText();
-        List<String> tasks = null;
-        if (currentTopic.equals("Learn")) {
-            tasks = topic1Tasks;
-        } else if (currentTopic.equals("Work")) {
-            tasks = topic2Tasks;
-        }
-        for (String task:tasks) {
-            if (task.substring(0,1).equals(number)) {
-                tasks.remove(task);
-            }
-        }
-        textArea.clear();
-        for (String task:tasks) {
-            textArea.appendText(task);
-            textArea.appendText("\n\n");
-        }
-        deleteTextField.clear();
-        deleteTextField.setVisible(false);
         btnSave.setStyle("-fx-background-color: #FA8072");  //изменение стиля компонента из кода, а не через файл .css
     }
 
